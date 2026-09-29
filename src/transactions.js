@@ -29,12 +29,13 @@ export function findTransactions(db, userId, { startDate, endDate, category, q }
   }
   if (q !== undefined && q.trim() !== '') {
     // SQLite LIKE is case-insensitive for ASCII
-    where.push("t.description LIKE ? ESCAPE '\\'");
-    params.push('%' + escapeLike(q.trim()) + '%');
+    where.push("(t.description LIKE ? ESCAPE '\\' OR t.vendor LIKE ? ESCAPE '\\')");
+    const pattern = '%' + escapeLike(q.trim()) + '%';
+    params.push(pattern, pattern);
   }
 
   const sql = `
-    SELECT t.id, t.date, t.amount, t.description, t.category_id AS categoryId, c.name AS categoryName
+    SELECT t.id, t.date, t.vendor, t.amount, t.description, t.category_id AS categoryId, c.name AS categoryName
     FROM transactions t
     LEFT JOIN categories c ON c.id = t.category_id
     WHERE ${where.join(' AND ')}

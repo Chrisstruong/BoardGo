@@ -13,7 +13,7 @@ const descriptions = (rows) => rows.map((r) => r.description);
 
 test('no filters returns all of the user\'s transactions, newest first', () => {
   const rows = findTransactions(setup(), 1);
-  assert.equal(rows.length, 6);
+  assert.equal(rows.length, 7);
   assert.equal(rows[0].description, 'October rent');
   assert.equal(rows.at(-1).description, 'September rent');
 });
@@ -25,7 +25,7 @@ test('date range is inclusive on both ends', () => {
 
 test('open-ended ranges work', () => {
   const db = setup();
-  assert.equal(findTransactions(db, 1, { startDate: '2026-09-20' }).length, 2);
+  assert.equal(findTransactions(db, 1, { startDate: '2026-09-20' }).length, 3);
   assert.equal(findTransactions(db, 1, { endDate: '2026-09-01' }).length, 1);
 });
 
@@ -44,7 +44,7 @@ test('keyword with typo or no match returns nothing', () => {
 });
 
 test('blank keyword is ignored', () => {
-  assert.equal(findTransactions(setup(), 1, { q: '   ' }).length, 6);
+  assert.equal(findTransactions(setup(), 1, { q: '   ' }).length, 7);
 });
 
 test('all filters combine with AND', () => {
@@ -68,4 +68,15 @@ test('LIKE wildcards and injection-style input are matched literally', () => {
   assert.equal(findTransactions(db, 1, { q: '%' }).length, 0);
   assert.equal(findTransactions(db, 1, { q: '_' }).length, 0);
   assert.equal(findTransactions(db, 1, { q: "' OR 1=1 --" }).length, 0);
+});
+
+test('keyword also matches vendor name', () => {
+  assert.deepEqual(descriptions(findTransactions(setup(), 1, { q: 'panera' })), ['Coffee and bagel']);
+});
+
+test('rows include vendor and signed amount', () => {
+  const refund = findTransactions(setup(), 1, { q: 'refund' })[0];
+  assert.equal(refund.vendor, 'Venmo');
+  assert.equal(refund.amount, 40.53);
+  assert.equal(refund.categoryName, null);
 });

@@ -10,8 +10,9 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS transactions (
   id          INTEGER PRIMARY KEY,
   user_id     INTEGER NOT NULL,
-  date        TEXT    NOT NULL, -- ISO YYYY-MM-DD, compared as text
-  amount      REAL    NOT NULL,
+  date        TEXT    NOT NULL, -- stored ISO YYYY-MM-DD so ranges compare as text; UI shows MM/DD/YYYY
+  vendor      TEXT    NOT NULL, -- e.g. Panera Bread
+  amount      REAL    NOT NULL, -- negative = spent, positive = added
   description TEXT    NOT NULL,
   category_id INTEGER REFERENCES categories(id)
 );
@@ -37,15 +38,16 @@ export function seed(db) {
   ].forEach((row) => cat.run(...row));
 
   const tx = db.prepare(
-    'INSERT INTO transactions (user_id, date, amount, description, category_id) VALUES (?, ?, ?, ?, ?)'
+    'INSERT INTO transactions (user_id, date, vendor, amount, description, category_id) VALUES (?, ?, ?, ?, ?, ?)'
   );
   [
-    [1, '2026-09-01', -1200, 'September rent', 2],
-    [1, '2026-09-03', -12.5, 'Coffee and bagel', 1],
-    [1, '2026-09-10', -45.2, 'Grocery store', 1],
-    [1, '2026-09-15', -2.75, 'Bus fare', 3],
-    [1, '2026-09-20', -60, 'Dinner with friends', 1],
-    [1, '2026-10-01', -1200, 'October rent', 2],
-    [2, '2026-09-05', -30, 'Coffee beans', 4],
+    [1, '2026-09-01', 'Oak Street Apartments', -1200, 'September rent', 2],
+    [1, '2026-09-03', 'Panera Bread', -12.5, 'Coffee and bagel', 1],
+    [1, '2026-09-10', 'Kroger', -45.2, 'Grocery store', 1],
+    [1, '2026-09-15', 'UTS Transit', -2.75, 'Bus fare', 3],
+    [1, '2026-09-20', 'Mellow Mushroom', -60, 'Dinner with friends', 1],
+    [1, '2026-09-25', 'Venmo', 40.53, 'Refund from roommate', null],
+    [1, '2026-10-01', 'Oak Street Apartments', -1200, 'October rent', 2],
+    [2, '2026-09-05', 'Starbucks', -30, 'Coffee beans', 4],
   ].forEach((row) => tx.run(...row));
 }
