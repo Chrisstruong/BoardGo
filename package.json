@@ -2,7 +2,7 @@
   "name": "boardgo",
   "version": "0.1.0",
   "private": true,
-  "description": "Transaction history with date/category filters and keyword search",
+  "description": "Transaction tracking",
   "type": "module",
   "engines": {
     "node": ">=22.13"

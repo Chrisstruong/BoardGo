@@ -10,11 +10,11 @@ CREATE TABLE IF NOT EXISTS categories (
 CREATE TABLE IF NOT EXISTS transactions (
   id          INTEGER PRIMARY KEY,
   user_id     INTEGER NOT NULL,
-  date        TEXT    NOT NULL, -- stored ISO YYYY-MM-DD so ranges compare as text; UI shows MM/DD/YYYY
+  date        TEXT    NOT NULL, -- ISO YYYY-MM-DD so ranges compare correctly as text; display layer formats as MM/DD/YYYY
+  category_id INTEGER REFERENCES categories(id),
   vendor      TEXT    NOT NULL, -- e.g. Panera Bread
   amount      REAL    NOT NULL, -- negative = spent, positive = added
-  description TEXT    NOT NULL,
-  category_id INTEGER REFERENCES categories(id)
+  description TEXT              -- optional free-text note; searched by findTransactions
 );
 
 -- Indexes for the filter queries (issue #4)
@@ -24,6 +24,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_category ON transactions(user_i
 
 export function openDb(file = ':memory:') {
   const db = new DatabaseSync(file);
+  db.exec('PRAGMA foreign_keys = ON');
   db.exec(SCHEMA);
   return db;
 }
