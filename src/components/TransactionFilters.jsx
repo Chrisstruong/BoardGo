@@ -1,7 +1,25 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-export default function TransactionFilters({ filters, onChange, onApply, onClear }) {
+const SEARCH_DEBOUNCE_MS = 300;
+
+export default function TransactionFilters({
+  filters,
+  categories,
+  onChange,
+  onApply,
+  onClear,
+  onCategoryChange,
+  onSearchChange,
+}) {
   const [error, setError] = useState('');
+  const [searchText, setSearchText] = useState(filters.q);
+  const debounceRef = useRef(null);
+
+  useEffect(() => {
+    setSearchText(filters.q);
+  }, [filters.q]);
+
+  useEffect(() => () => clearTimeout(debounceRef.current), []);
 
   function updateDate(field, value) {
     setError('');
@@ -23,6 +41,13 @@ export default function TransactionFilters({ filters, onChange, onApply, onClear
   function handleClear() {
     setError('');
     onClear();
+  }
+
+  function handleSearchChange(event) {
+    const value = event.target.value;
+    setSearchText(value);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => onSearchChange(value), SEARCH_DEBOUNCE_MS);
   }
 
   return (
@@ -64,6 +89,34 @@ export default function TransactionFilters({ filters, onChange, onApply, onClear
         <button type="button" className="secondary" onClick={handleClear}>
           Clear
         </button>
+      </div>
+
+      <div className="category-search-fields">
+        <label>
+          Category
+          <select
+            value={filters.category}
+            onChange={(event) => onCategoryChange(event.target.value)}
+          >
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label>
+          Search
+          <input
+            type="search"
+            name="q"
+            value={searchText}
+            onChange={handleSearchChange}
+            placeholder="Search by vendor or description"
+          />
+        </label>
       </div>
     </form>
   );
