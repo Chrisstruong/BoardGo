@@ -4,3 +4,4 @@ coverage/
 *.log
 *.db
 .DS_Store
+CLAUDE.md
