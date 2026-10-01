@@ -1,6 +1,7 @@
 import { createServer } from 'node:http';
 import { openDb } from './db.js';
 import { getTransactions } from './api/transactions.js';
+import { getCategories } from './api/categories.js';
 
 /**
  * Builds the HTTP API server. `userId` would normally come from an auth
@@ -14,6 +15,14 @@ export function createApp(db) {
     if (req.method === 'GET' && url.pathname === '/api/transactions') {
       const userId = Number(req.headers['x-user-id']);
       const { status, body } = getTransactions(db, userId, Object.fromEntries(url.searchParams));
+      res.writeHead(status, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(body));
+      return;
+    }
+
+    if (req.method === 'GET' && url.pathname === '/api/categories') {
+      const userId = Number(req.headers['x-user-id']);
+      const { status, body } = getCategories(db, userId);
       res.writeHead(status, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(body));
       return;

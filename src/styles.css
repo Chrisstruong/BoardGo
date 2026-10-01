@@ -65,10 +65,26 @@ h1 {
   background: #fafcf9;
 }
 
-.date-fields {
+.date-fields,
+.category-search-fields {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+
+.category-search-fields {
+  margin-top: 18px;
+}
+
+input[type="date"],
+input[type="search"],
+select {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid #bdc9c0;
+  border-radius: 9px;
+  color: inherit;
+  background: #fff;
 }
 
 label {
@@ -76,15 +92,6 @@ label {
   gap: 8px;
   font-size: 0.875rem;
   font-weight: 700;
-}
-
-input[type="date"] {
-  width: 100%;
-  padding: 11px 12px;
-  border: 1px solid #bdc9c0;
-  border-radius: 9px;
-  color: inherit;
-  background: #fff;
 }
 
 input:focus-visible,
@@ -176,7 +183,8 @@ button.secondary:hover {
     padding: 32px 0;
   }
 
-  .date-fields {
+  .date-fields,
+  .category-search-fields {
     grid-template-columns: 1fr;
   }
 }
