@@ -1,5 +1,6 @@
 {
   "name": "boardgo",
+<<<<<<< HEAD
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -20,5 +21,16 @@
     "jsdom": "latest",
     "vite": "latest",
     "vitest": "latest"
+=======
+  "version": "0.1.0",
+  "private": true,
+  "description": "Transaction tracking",
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "test": "node --test"
+>>>>>>> origin/main
   }
 }
