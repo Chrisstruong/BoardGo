@@ -69,6 +69,10 @@ export function parseTransactionFilters(query = {}) {
  * @param {object} query
  */
 export function getTransactions(db, userId, query) {
+  if (!Number.isInteger(userId)) {
+    return { status: 400, body: { error: 'Missing or invalid user' } };
+  }
+
   const parsed = parseTransactionFilters(query);
   if (parsed.error) {
     return { status: 400, body: { error: parsed.error } };

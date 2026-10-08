@@ -6,6 +6,10 @@
  * @param {number} userId
  */
 export function getCategories(db, userId) {
+  if (!Number.isInteger(userId)) {
+    return { status: 400, body: { error: 'Missing or invalid user' } };
+  }
+
   const categories = db
     .prepare('SELECT id, name FROM categories WHERE user_id = ? ORDER BY name')
     .all(userId);

@@ -107,3 +107,13 @@ test('parseTransactionFilters rejects reversed ranges independently of the handl
   const result = parseTransactionFilters({ startDate: '2026-09-20', endDate: '2026-09-01' });
   assert.ok(result.error);
 });
+
+test('missing x-user-id returns 400, not a 200 with an empty list', () => {
+  const { status } = getTransactions(setup(), NaN, {});
+  assert.equal(status, 400);
+});
+
+test('invalid (non-numeric) x-user-id returns 400, not a 200 with an empty list', () => {
+  const { status } = getTransactions(setup(), Number('not-a-user'), {});
+  assert.equal(status, 400);
+});
