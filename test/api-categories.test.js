@@ -28,3 +28,13 @@ test('a user with no categories gets an empty list', () => {
   assert.equal(status, 200);
   assert.deepEqual(body.categories, []);
 });
+
+test('missing x-user-id returns 400, not a 200 with an empty list', () => {
+  const { status } = getCategories(setup(), NaN);
+  assert.equal(status, 400);
+});
+
+test('invalid (non-numeric) x-user-id returns 400, not a 200 with an empty list', () => {
+  const { status } = getCategories(setup(), Number('not-a-user'));
+  assert.equal(status, 400);
+});
